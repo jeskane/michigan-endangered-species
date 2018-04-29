@@ -220,6 +220,9 @@ function viewBySpecies(csvData, counties){
     }));
     
     $('select[name="categoryDropdown"]').change(function(){
+        
+        $('.counties').css('fill', 'gray');
+        
         var selection = $(this).val();
         if (selection == "animal") {
             var category = 'Animal';
