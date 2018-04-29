@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width">
+		<title></title>
+
+		<!--put your external stylesheet links here-->
+        <link href="https://fonts.googleapis.com/css?family=Black+Han+Sans|Hind+Madurai" rel="stylesheet">
+		<link rel="stylesheet" href="css/style.css">
+		<!--[if IE<9]>
+			<link rel="stylesheet" href="css/style.ie.css">
+		<![endif]-->
+	</head>
+
+	<body>
+	
+        <!--
+        <div id="title-area">
+            <h1>Michigan's Threatened &amp; Endangered Species</h1>
+            <p>Text here about the page, data etc</p>
+            <p> E = Endangered | T = Threatened | SC = Special Concern</p>
+        </div>
+        -->
+        
+        <div id="container">
+            <div id="data-container">
+                <h1>Michigan's Threatened &amp; Endangered Species</h1>
+                <p>Text here about the page, data etc</p>
+                <p> E = Endangered | T = Threatened | SC = Special Concern</p>
+                <select name="mainDropdown" id="viewSelect" size=1>
+                    <option value="" disabled selected>Select How to View the Data</option>
+                    <option value="viewByCounty">View By County</option>
+                    <option value="viewBySpecies">View By Species</option>
+                </select>
+                <div id="selection-area"></div>
+                <div id="last-dropdown-area"></div>
+            </div>
+        </div>
+
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="crossorigin="anonymous"></script>
+		<script type="text/javascript" src="lib/d3/d3.min.js"></script>
+        <script type="text/javascript" src="lib/d3-queue/d3-queue.min.js"></script>
+        <script type="text/javascript" src="lib/topojson/topojson.min.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+	</body>
+</html>
