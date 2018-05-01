@@ -100,6 +100,7 @@ function setMap(){
 function viewByCounty(csvData, counties){
     
     $('#selection-area').empty();
+    $('#species-info').empty();
     $('#last-dropdown-area').empty();
     $('.counties').css('fill', 'gray');
     
@@ -195,6 +196,7 @@ function createTable(countyId, csvData, counties){
 function viewBySpecies(csvData, counties){
     
     $('#selection-area').empty();
+    $('#species-info').empty();
     
     $("#selection-area").append('<p class="instructions"><em> Select a category, then species to view the counties where that species is present on the map.</em></p>')
     
@@ -247,36 +249,54 @@ function viewBySpecies(csvData, counties){
 
 function createSpeciesDropdown(csvData, category){
     $('#last-dropdown-area').empty();
+    $('#species-info').empty();
             
-    $("#last-dropdown-area").append('<br><select name="speciesDropdown" id="speciesSelect" size=1>');
+    $("#last-dropdown-area").append(
+        '<br><input list="speciesInput" name="speciesDropdown" id="speciesSelect" placeholder="Type or Select Species" style="width: 350px;">' +
+        '<datalist id="speciesInput"></datalist>'
+        //'<input list="browsers" id="myBrowser" name="myBrowser" //<datalist id="browsers"><option value="Chrome"><option //value="Firefox"><option value="Internet Explorer"><option //value="Opera"><option value="Safari"><option value="Microsoft //Edge"><option value="Opera123"></datalist>'
+    );
 
-    $('#speciesSelect').append($('<option value="" disabled selected>Select Species</option>'));
+    //$('#speciesInput').append($('<option value="" disabled //selected>Select Species</option>'));
     
     var filteredCategory =
         csvData.filter(function(d) {
             return d.EL_CATEGORY == category;
         });
 
-    var options = d3.select("#speciesSelect").selectAll("option")
-        .data(d3.map(filteredCategory, function(d){return d.COMMON_NAME;}).keys())
+    var options = d3.select("#speciesInput").selectAll("option")
+        .data(d3.map(filteredCategory, function(d){return d.COMMON_NAME + ' (' + d.SCIENTIFIC_NAME + ')';}).keys())
         .enter()
         .append("option")
-        .text(function(d){return d;})
+        //.text(function(d){return d;})
         .attr("value",function(d){return d;})
         .sort(function(a, b) {
             return d3.ascending(a, b)
         });
     
-    $('select[name="speciesDropdown"]').change(function(){
+    $('input[name="speciesDropdown"]').change(function(){
         $('.counties').css('fill', 'gray');
+        $('#species-info').empty();
         
-        var speciesID = $(this).val();
+        var value = $(this).val();
+        var speciesID = value.split('(')[0];
+        var speciesID = speciesID.trim();
+        var stateStatus = 'No Status';
+        var fedStatus = 'No Status';
+        var scientificName;
+        var elementId;
         
         var countyList = [];
         
         for (row in csvData) {
             if (csvData[row].COMMON_NAME == speciesID) {
                 countyList.push(csvData[row].County);
+                elementId = csvData[row].ELEMENT_ID;
+                stateStatus = csvData[row].STATE_STATUS;
+                scientificName = csvData[row].SCIENTIFIC_NAME;
+                if (csvData[row].US_STATUS != '') {
+                    fedStatus = csvData[row].US_STATUS;
+                }
             }
         };
         
@@ -288,6 +308,13 @@ function createSpeciesDropdown(csvData, category){
             $('#' + id).css('fill', 'red');
             
         }
+        
+        $('#species-info').append(
+            '<h3>' + speciesID + ' (<em>' + scientificName + '</em>)</h3>' +
+            '<p><strong>State Status:</strong> ' + stateStatus + '</p>' +
+            '<p><strong>Federal Status:</strong> ' + fedStatus + '</p>' +
+            '<p><a href="https://mnfi.anr.msu.edu/explorer/species.cfm?id=' + elementId +'" target="_blank">More Information</a></p>'
+        );
         
     });
     
