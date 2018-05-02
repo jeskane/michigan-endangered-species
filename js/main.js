@@ -4,12 +4,25 @@
 //begin script when window loads
 window.onload = setMap();
 
+var mapColor = '#A0B59F';
+var panelColor = '#596F62';
+var highlightColor = '#368C54';
+var textColor = 'ghostwhite';
+var bodyColor = '#F1FFE7';
+
 //set up map
 function setMap(){
     
+    $(window).resize(function() {
+        if (window.innerWidth > 1020) {
+            $('#data-container').css('height', window.innerHeight+'px');
+            //$('#map-container').css('height', window.innerHeight+'px');
+        }
+    });
+    
     //map frame dimensions
-    var width = 750,
-        height = 480;
+    var width = 498,
+        height = 572;
     
     //create new svg container for the map
     var mapContainer = d3.select("#container")
@@ -74,6 +87,9 @@ function setMap(){
             .enter()
             .append("text")
             .attr("class", "labels")
+            .attr("id", function(d){
+                return d.properties.NAME + '-label';
+            })
             .attr("text-anchor", "middle")
             .attr("x", function(d) {
                 return path.centroid(d)[0];
@@ -100,18 +116,22 @@ function setMap(){
 function viewByCounty(csvData, counties){
     
     $('#selection-area').empty();
-    $('#species-info').empty();
+    $('#species-info').empty().css('background-color', panelColor);
     $('#last-dropdown-area').empty();
-    $('.counties').css('fill', 'gray');
+    $('.counties').css('fill', mapColor);
     
     $("#selection-area").append('<p class="instructions"><em> Click on a county to view a list of threatened/endangered species found there.</em></p>')
+    
+    $("#selection-area").append('<p class="key"><p> E = Endangered | T = Threatened | SC = Special Concern</p>')
+    
+    
     
     $(".counties").click(function() {
         var countyId = $(this).attr("id");
         var countyName = countyId.replace(/-/g, ' ');
         
-        $('.counties').css('fill', 'gray');
-        $('#' + countyId).css('fill', 'black');
+        $('.counties').css('fill', mapColor);
+        $('#' + countyId).css('fill', highlightColor);
         $('#county-title').remove();
         $("#selection-area").append('<h3 id="county-title">' + countyName + ' County</h3>')
         createTable(countyId, csvData, counties);
@@ -126,12 +146,12 @@ function createTable(countyId, csvData, counties){
     var columnsRemoved =
         csvData.map(function(d){
             return {
-                'County': d.County,
-                'Scientific Name': d.SCIENTIFIC_NAME,
-                'Common Name': d.COMMON_NAME,
-                'Category': d.EL_CATEGORY,
                 'State Status': d.STATE_STATUS,
-                'US Status': d.US_STATUS
+                'US Status': d.US_STATUS,
+                'Common Name': d.COMMON_NAME,
+                'Scientific Name': d.SCIENTIFIC_NAME,
+                'Category': d.EL_CATEGORY,
+                'County': d.County
             }
         })
     
@@ -189,6 +209,13 @@ function createTable(countyId, csvData, counties){
 		    .text(function (d) {
 		    	return d.value;
 		    });
+    
+   // var tableHeight = $('#selection-area').height;
+    //console.log(tableHeight);
+    //$('#county-table').css('height', tableHeight+'px');
+        
+        //var parentHeight = $("#data-container").height();
+        //console.log(parentHeight);
 	  //});
     
 };
@@ -196,11 +223,13 @@ function createTable(countyId, csvData, counties){
 function viewBySpecies(csvData, counties){
     
     $('#selection-area').empty();
-    $('#species-info').empty();
+    $('#species-info').empty().css('background-color', panelColor);
     
     $("#selection-area").append('<p class="instructions"><em> Select a category, then species to view the counties where that species is present on the map.</em></p>')
     
-    $('.counties').css('fill', 'gray');
+    $("#selection-area").append('<p class="key"><p> E = Endangered | T = Threatened | SC = Special Concern</p>')
+    
+    $('.counties').css('fill', mapColor);
     $('.counties').off('click');
     
     //Add dropdown
@@ -223,7 +252,7 @@ function viewBySpecies(csvData, counties){
     
     $('select[name="categoryDropdown"]').change(function(){
         
-        $('.counties').css('fill', 'gray');
+        $('.counties').css('fill', mapColor);
         
         var selection = $(this).val();
         if (selection == "animal") {
@@ -249,7 +278,7 @@ function viewBySpecies(csvData, counties){
 
 function createSpeciesDropdown(csvData, category){
     $('#last-dropdown-area').empty();
-    $('#species-info').empty();
+    $('#species-info').empty().css('background-color', panelColor);
             
     $("#last-dropdown-area").append(
         '<br><input list="speciesInput" name="speciesDropdown" id="speciesSelect" placeholder="Type or Select Species" style="width: 350px;">' +
@@ -275,8 +304,8 @@ function createSpeciesDropdown(csvData, category){
         });
     
     $('input[name="speciesDropdown"]').change(function(){
-        $('.counties').css('fill', 'gray');
-        $('#species-info').empty();
+        $('.counties').css('fill', mapColor);
+        $('#species-info').empty().css('background-color', panelColor);
         
         var value = $(this).val();
         var speciesID = value.split('(')[0];
@@ -305,16 +334,16 @@ function createSpeciesDropdown(csvData, category){
             county = county.replace(/\./g, "")
             id = county.replace(/\s+/g, '-');
         
-            $('#' + id).css('fill', 'red');
+            $('#' + id).css('fill', highlightColor);
             
         }
         
         $('#species-info').append(
-            '<h3>' + speciesID + ' (<em>' + scientificName + '</em>)</h3>' +
+            '<h3>' + speciesID + ' (<em>' + scientificName + '</em>)</h3><hr>' +
             '<p><strong>State Status:</strong> ' + stateStatus + '</p>' +
             '<p><strong>Federal Status:</strong> ' + fedStatus + '</p>' +
             '<p><a href="https://mnfi.anr.msu.edu/explorer/species.cfm?id=' + elementId +'" target="_blank">More Information</a></p>'
-        );
+        ).css('background-color', textColor);
         
     });
     

@@ -1,8 +1,31 @@
 /* Stylesheet by Jessica Kane, 2018 */
 /* Responsive Table code modified from bl.ocks.org and carries the same license (http://bl.ocks.org/AMDS/4a61497182b8fcb05906) */
 
+:root {
+    --map-color: #A0B59F;
+    --panel-color: #596F62;
+    /*--highlight-color: #368C54;*/
+    --highlight-color: #2D7546;
+    --text-color: ghostwhite;
+    --body-color: #F1FFE7;
+}
+
+html, body, #container {
+    height: 100%
+}
+
 body {
     font-family: 'Hind Madurai', sans-serif;
+    /*overflow: hidden;*/
+    margin: 0;
+    background-color: var(--body-color);
+}
+
+hr {
+    border: var(--text-color);
+    background-color: var(--text-color);
+    height: 5px;
+    margin-bottom: 25px; 
 }
 
 #title-area {
@@ -10,38 +33,78 @@ body {
     padding-left: 75px;
 }
 
-h1 {
-    font-family: 'Black Han Sans', sans-serif;
+
+/*
+
+
+#map-container {
+    display: inline-block;
+    width: 50%;
+    margin-top: 50px;
 }
 
+#chart-container {
+    display: inline-block;
+    width: 50%;
+    margin-top: 50px;
+}
+
+.map {
+    display: inline-block;
+}
+*/
 #container {
     position: relative;
 }
 
-#data-container {
-    display: inline-block;
-    width: 25%;
-    padding-top: 25px;
-    padding-left: 75px
-}
-
-select {
-    
-}
-
 #map-container {
     display: inline-block;
-    width: 69%;
+    width: 50%;
+    height: 100%;
     float: right;
+    padding-right: 50px;
+}
+
+#data-container {
+    display: inline-block;
+    width: 35%;
+    padding-top: 15px;
+    padding-left: 50px;
+    padding-right: 50px;
+    /*background-color: #3873B2;*/
+    background-color: var(--panel-color);
+    color: var(--text-color);
+}
+
+h1 {
+    font-family: 'Francois One', sans-serif;
+    /*color: #FFD10C;*/
+    /*color: #F9BE00;*/
+    color: var(--text-color);
+    font-size: 2.5em;
+}
+
+.map {
+    /*display: inline-block;*/
+    display: block;
+      margin: auto;
+      height: 100%;
 }
 
 .counties {
-    fill: gray;
-    stroke: #CCC;
+    /*fill: #005580;*/
+    /*fill: #160A47;*/
+    fill: var(--map-color);
+    stroke: white;
 }
 
 .labels {
-    font-size: .3em;
+    font-size: .33em;
+    fill: var(--panel-color);
+}
+
+#Keweenaw-label {
+    fill: gray;
 }
 
 .instructions{
@@ -51,6 +114,34 @@ select {
 #animalOrPlantSelect, #viewSelect, #speciesSelect {
     font-family: 'Hind Madurai', sans-serif;
     font-size: 1.1em;
+    background-color: var(--text-color);
+}
+
+table {
+    display: block;
+    /*width: 100%;*/
+    height: 500px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    /*margin:0 auto;
+    background: #aaa;
+    color: #333;
+    text-align: left;
+    font-size: 1.4em;*/
+}
+
+#species-info {
+    background-color: var(--panel-color);
+    color: black;
+    padding: 5px 25px 5px 25px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#species-info hr {
+    border: var(--panel-color);
+    background-color: var(--panel-color);
+    height: 1px;
 }
 
 /*-------------------------TABLE----------------------------*/
@@ -80,10 +171,19 @@ table {
 }
 /* Zebra striping */
 tr:nth-of-type(odd) { 
-    background: #eee; 
+    background: #eee;
+    color: black;
 }
+
+tr:nth-of-type(even) { 
+    background: white;
+    color: black;
+}
+
 th { 
-    background: #333; 
+    /*background: #90A38F;*/
+    background: var(--highlight-color);
+    /*background: #333; */
     color: white; 
     font-weight: bold; 
     cursor: s-resize;
@@ -157,6 +257,30 @@ only screen and (max-width: 760px),
     }
 }
 
+@media screen and (max-width: 1020px) {
+    #data-container {
+        width: 100%;
+    }
+    
+    #map-container {
+        width: 100%;
+        padding: 0px;
+    }
+}
+
+/*
+@media screen and (max-height: 890px) {
+    table {
+        height: 425px;
+    }
+}
+
+@media screen and (max-height: 815px) {
+    table {
+        height: 300px;
+    }
+}
+*/
 
 /* Smartphones (portrait and landscape) ----------- */
 /*
