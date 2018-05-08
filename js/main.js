@@ -1,5 +1,6 @@
 /* By Jessica Kane, 2018 */
 /* Responsive Table code modified from bl.ocks.org and carries the same license (http://bl.ocks.org/AMDS/4a61497182b8fcb05906) */
+/* DataTables https://datatables.net/ */
 
 (function(){
     
@@ -10,23 +11,22 @@
     var highlightColor = '#368C54';
     var textColor = 'ghostwhite';
     var bodyColor = '#F1FFE7';
-    var key = '<p id="key"><p> <strong>State Status:</strong> E = Endangered | T = Threatened | SC = Special Concern | X = Presumed Extirpated</p><p><strong>Federal Status:</strong> LE = Listed Endangered | LT = Listed Threatened | LELT = Listed Endangered Listed Threatened | PDL = Proposed Delist | E(S/A) = Endangered Based on Similarities/Appearance | PS = Partial Status | C = Species Being Considered for Federal Status';
+    var key = '<div id="key"><p><strong>State Status:</strong> E = Endangered | T = Threatened | SC = Special Concern | X = Presumed Extirpated</p><p><strong>Federal Status:</strong> LE = Listed Endangered | LT = Listed Threatened | LELT = Listed Endangered Listed Threatened | PDL = Proposed Delist | E(S/A) = Endangered Based on Similarities/Appearance | PS = Partial Status | C = Species Being Considered for Federal Status</p></div>';
 
+    //Reset the map to start
     function reset(){
         $('#selection-area').empty();
         $('#species-info').empty().css('background-color', panelColor);
         $('#last-dropdown-area').empty();
         $('.counties').css('fill', mapColor);
         $('.labels').css('fill', panelColor);
-    }
+    };
     
     //-------------------------Map-------------------------
     function setMap(){
-
         $(window).resize(function() {
-            if (window.innerWidth > 1020) {
+            if (window.innerWidth > 1050) {
                 $('#data-container').css('height', window.innerHeight+'px');
-                //$('#map-container').css('height', window.innerHeight+'px');
             }
         });
 
@@ -46,7 +46,7 @@
             .attr("viewBox", "0 0 " + width + " " + height)
             .attr("class", "map");
 
-        $("#map-container").append("<div id='attribution'><p><em>April 10, 2018 | Sources: <a href='https://mnfi.anr.msu.edu/' target='_blank'>Michigan Natrual Features Inventory</a> (Special Thanks to Rebecca Rogers), <a href='http://gis-michigan.opendata.arcgis.com/' target='_blank'>Michigan GIS Open Data</a> | Fonts: <a href='https://fonts.google.com/specimen/Francois+One' target='_blank'>Francois One</a>, <a href='https://fonts.google.com/specimen/Hind+Madurai' target='_blank'>Hind Madurai</a> | By: <a href='https://jeskane.github.io/' target='_blank'>Jessica Kane</a>, supported by an <a href='https://www.aauw.org/' target='_blank'>AAUW</a> Career Development Grant</em></p></div>");
+        $("#map-container").append("<div id='attribution'><p><em>April 10, 2018 | Sources: <a href='https://mnfi.anr.msu.edu/' target='_blank'>Michigan Natrual Features Inventory</a> (Special Thanks to Rebecca Rogers), <a href='http://gis-michigan.opendata.arcgis.com/' target='_blank'>Michigan GIS Open Data</a><br>Fonts: <a href='https://fonts.google.com/specimen/Francois+One' target='_blank'>Francois One</a>, <a href='https://fonts.google.com/specimen/Hind+Madurai' target='_blank'>Hind Madurai</a> | By: <a href='https://jeskane.github.io/' target='_blank'>Jessica Kane</a>, supported by an <a href='https://www.aauw.org/' target='_blank'>AAUW</a> Career Development Grant</em></p></div>");
 
         //Make map responsive to changing screen size
         var mapSelect = $(".map");
@@ -77,10 +77,10 @@
 
         function callback(error, csvData, counties){
 
-            //translate countie TopoJSON
+            //translate counties TopoJSON
             var MIcounties = topojson.feature(counties, counties.objects.MICounties).features;
 
-            //add France regions to map
+            //add counties to map
             var counties = map.selectAll(".counties")
                 .data(MIcounties)
                 .enter()
@@ -120,169 +120,131 @@
             $('select[name="mainDropdown"]').change(function(){
                 var selection = $(this).val();
                 if (selection == "viewBySpecies") {
-                    viewBySpecies(csvData, counties);
+                    viewBySpecies(csvData);
                 } else {
-                    viewByCounty(csvData, counties);
+                    viewByCounty(csvData);
                 };
             });
         };
     };
-
-    function onCountyClick(countyId, labelId, countyName, csvData){
-        //reset();
-            $('.counties').css('fill', mapColor);
-            $('.labels').css('fill', panelColor);
-            $('#' + countyId).css('fill', highlightColor);
-            
-            if (labelId == 'Keweenaw-label') {
-                $('#' + labelId).css('fill', panelColor);
-            } else {
-                $('#' + labelId).css('fill', textColor);
-            }
-            
-            
-            if (!document.getElementById('key')) {
-                $("#selection-area").append(key);
-            };
-        
-            $('#county-title').remove();
-            $("#selection-area").append('<h3 id="county-title">' + countyName + ' County</h3>')
-        
-            createTable(countyId, csvData);
-    };
     
-    
-    //------------------------View By County------------------------
-    function viewByCounty(csvData, counties){
-
+    //----------------------------View By County----------------------------
+    function viewByCounty(csvData){
         reset();
-        //$('#selection-area').empty();
-        //$('#species-info').empty().css('background-color', panelColor);
-        //$('#last-dropdown-area').empty();
-        //$('.counties').css('fill', mapColor);
-        //$('.labels').css('fill', panelColor);
 
-        $("#selection-area").append('<p class="instructions"><em> Click on a county to view a list of threatened/endangered species found there.</em></p>')
+        $("#selection-area").append('<p class="instructions"><em> Click on a county.</em></p>')
 
+        //Make counties clickable
         $(".counties").click(function() {
             var countyId = $(this).attr("id");
             var labelId = countyId + '-label';
             var countyName = countyId.replace(/-/g, ' ');
             
             onCountyClick(countyId, labelId, countyName, csvData);
-            
         });
         
+        //Make labels clickable
         $(".labels").click(function() {
             var labelId = $(this).attr("id");
             var countyId = labelId.slice(0, -6);
             var countyName = countyId.replace(/-/g, ' ');
             
             onCountyClick(countyId, labelId, countyName, csvData);
-            
         });
 
     };
+    
+    function onCountyClick(countyId, labelId, countyName, csvData){
+        //reset(); Don't need to reset everything
+        $('.counties').css('fill', mapColor);
+        $('.labels').css('fill', panelColor);
+        $('#' + countyId).css('fill', highlightColor);
+
+        if (labelId == 'Keweenaw-label') {
+            $('#' + labelId).css('fill', panelColor);
+        } else {
+            $('#' + labelId).css('fill', textColor);
+        };
+
+        if (!document.getElementById('key')) {
+            $("#selection-area").append(key);
+        };
+        
+        $('#county-title').remove();
+        $("#selection-area").append('<h3 id="county-title">' + countyName + ' County</h3>')
+
+        createTable(countyId, csvData);
+    };
 
     function createTable(countyId, csvData){
-
         $('#county-table').remove();
+        $('#county-table_wrapper').remove();
 
-        var columnsRemoved =
-            csvData.map(function(d){
-                return {
-                    'State Status': d.STATE_STATUS,
-                    'US Status': d.US_STATUS,
-                    'Common Name': d.COMMON_NAME,
-                    'Scientific Name': d.SCIENTIFIC_NAME,
-                    'Category': d.EL_CATEGORY,
-                    'County': d.County
-                }
-            })
+        var columnsRemoved = csvData.map(function(d){
+            return {
+                'Common Name': d.COMMON_NAME,
+                'Scientific Name': d.SCIENTIFIC_NAME,
+                'State Status': d.STATE_STATUS,
+                'US Status': d.US_STATUS,
+                'Category': d.EL_CATEGORY,
+                'County': d.County
+            }
+        });
 
-        var filteredData =
-            columnsRemoved.filter(function(d) {
-                var county = d.County;
-                county = county.replace(/\./g, "")
-                var id = county.replace(/\s+/g, '-');
-                return id == countyId;
+        var filteredData = columnsRemoved.filter(function(d) {
+            var county = d.County;
+            county = county.replace(/\./g, "")
+            var id = county.replace(/\s+/g, '-');
+            return id == countyId;
+        });
+
+        //Create Table
+        var table = d3.select('#selection-area')
+            .append('table')
+            .attr("id", "county-table");
+        
+        var titles = d3.keys(columnsRemoved[0]);
+        
+        var headers = table.append('thead').append('tr')
+            .selectAll('th')
+            .data(titles).enter()
+            .append('th')
+            .text(function (d) {
+                return d;
             });
 
-        //d3.csv("data.csv", function(error, data) {
-    //		  if (error) throw error;
-
-              var sortAscending = true;
-              var table = d3.select('#selection-area')
-                .append('table')
-                .attr("id", "county-table");
-              var titles = d3.keys(columnsRemoved[0]);
-              var headers = table.append('thead').append('tr')
-                               .selectAll('th')
-                               .data(titles).enter()
-                               .append('th')
-                               .text(function (d) {
-                                    return d;
-                                })
-                               .on('click', function (d) {
-                                   headers.attr('class', 'header');
-
-                                   if (sortAscending) {
-                                     rows.sort(function(a, b) { return b[d] < a[d]; });
-                                     sortAscending = false;
-                                     this.className = 'aes';
-                                   } else {
-                                     rows.sort(function(a, b) { return b[d] > a[d]; });
-                                     sortAscending = true;
-                                     this.className = 'des';
-                                   }
-
-                               });
-
-              var rows = table.append('tbody').selectAll('tr')
-                           .data(filteredData).enter()
-                           .append('tr');
-              rows.selectAll('td')
-                .data(function (d) {
-                    return titles.map(function (k) {
-                        return { 'value': d[k], 'name': k};
-                    });
-                }).enter()
-                .append('td')
-                .attr('data-th', function (d) {
-                    return d.name;
-                })
-                .text(function (d) {
-                    return d.value;
+        var rows = table.append('tbody').selectAll('tr')
+            .data(filteredData).enter()
+            .append('tr');
+      
+        rows.selectAll('td')
+            .data(function (d) {
+                return titles.map(function (k) {
+                    return { 'value': d[k], 'name': k};
                 });
+            }).enter()
+            .append('td')
+            .attr('data-th', function (d) {
+                return d.name;
+            })
+            .text(function (d) {
+                return d.value;
+            });
 
-       // var tableHeight = $('#selection-area').height;
-        //console.log(tableHeight);
-        //$('#county-table').css('height', tableHeight+'px');
-
-            //var parentHeight = $("#data-container").height();
-            //console.log(parentHeight);
-          //});
-
+        //Create DataTable if screen is big enough.
+        //Otherwise go with responsive table.
+        if (window.innerWidth > 760) {
+            $('#county-table').DataTable();
+        };
     };
 
     //------------------------View By Species------------------------
-    function viewBySpecies(csvData, counties){
-
+    function viewBySpecies(csvData){
         reset();
-        //$('#selection-area').empty();
-        //$('#species-info').empty().css('background-color', panelColor);
-
-        //$("#selection-area").append('<p class="instructions"><em> Select a category, then species to view the counties where that species is present on the map.</em></p>')
-
-        //$('.counties').css('fill', mapColor);
         $('.counties').off('click');
 
         //Add dropdown
         $("#selection-area").append('<br><select name="categoryDropdown" id="animalOrPlantSelect" size=1>');
-
-        //Set CSS for dropdown
-        //$('#animalOrPlantSelect').css("font-family", "'Hind Madurai', sans-serif");
-        //$('#animalOrPlantSelect').css("font-size", "1.1em");
 
         //Add options to dropdown
         $('#animalOrPlantSelect').append($('<option value="" disabled selected>Select Category</option>'));
@@ -296,61 +258,46 @@
         }));
 
         $('select[name="categoryDropdown"]').change(function(){
-
             $('.counties').css('fill', mapColor);
             $('.labels').css('fill', panelColor);
 
             var selection = $(this).val();
             if (selection == "animal") {
                 var category = 'Animal';
-
                 createSpeciesDropdown(csvData, category);
-
             } else if (selection == "plant"){
                 var category = 'Plant';
-
-                //$('#last-dropdown-area').empty();
-
-                //$("#last-dropdown-area").append('<br><select //name="plantDropdown" id="plantSelect" size=1>');
-
-                //$('#plantSelect').append($('<option value="" disabled //selected>Select Plant</option>'));
-
                 createSpeciesDropdown(csvData, category);
-
             };
         });
-
     };
 
     function createSpeciesDropdown(csvData, category){
-        //reset();
+        //reset(); Don't need to reset everything
         $('#last-dropdown-area').empty();
         $('#species-info').empty().css('background-color', panelColor);
         $("#last-dropdown-area").append(
             '<br><input list="speciesInput" name="speciesDropdown" id="speciesSelect" placeholder="Type or Select Species" style="width: 350px;">' +
             '<datalist id="speciesInput"></datalist>'
-            //'<input list="browsers" id="myBrowser" name="myBrowser" //<datalist id="browsers"><option value="Chrome"><option //value="Firefox"><option value="Internet Explorer"><option //value="Opera"><option value="Safari"><option value="Microsoft //Edge"><option value="Opera123"></datalist>'
         );
 
-        //$('#speciesInput').append($('<option value="" disabled //selected>Select Species</option>'));
-
-        var filteredCategory =
-            csvData.filter(function(d) {
-                return d.EL_CATEGORY == category;
-            });
+        var filteredCategory = csvData.filter(function(d) {
+            return d.EL_CATEGORY == category;
+        });
 
         var options = d3.select("#speciesInput").selectAll("option")
-            .data(d3.map(filteredCategory, function(d){return d.COMMON_NAME + ' -- ' + d.SCIENTIFIC_NAME;}).keys())
+            .data(d3.map(filteredCategory, function(d){
+                return d.COMMON_NAME + ' -- ' + d.SCIENTIFIC_NAME;
+            }).keys())
             .enter()
             .append("option")
-            //.text(function(d){return d;})
             .attr("value",function(d){return d;})
             .sort(function(a, b) {
                 return d3.ascending(a, b)
             });
 
         $('input[name="speciesDropdown"]').change(function(){
-            //reset();
+            //reset(); Don't need to reset everything
             $('.counties').css('fill', mapColor);
             $('.labels').css('fill', panelColor);
             $('#species-info').empty().css('background-color', panelColor);
@@ -374,7 +321,7 @@
                     if (csvData[row].US_STATUS != '') {
                         fedStatus = csvData[row].US_STATUS;
                     }
-                }
+                };
             };
 
             for (county in countyList) {
@@ -389,9 +336,9 @@
                     $('#' + labelId).css('fill', panelColor);
                 } else {
                     $('#' + labelId).css('fill', textColor);
-                }
+                };
 
-            }
+            };
 
             if (!document.getElementById('key')) {
                 $("#last-dropdown-area").append(key);
@@ -403,9 +350,7 @@
                 '<p><strong>Federal Status:</strong> ' + fedStatus + '</p>' +
                 '<p><a href="https://mnfi.anr.msu.edu/explorer/species.cfm?id=' + elementId +'" target="_blank">More Information</a></p>'
             ).css('background-color', textColor);
-
         });
-
     };
     
 })();

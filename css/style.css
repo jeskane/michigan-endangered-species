@@ -4,56 +4,25 @@
 :root {
     --map-color: #A0B59F;
     --panel-color: #596F62;
-    /*--highlight-color: #368C54;*/
     --highlight-color: #2D7546;
     --text-color: ghostwhite;
     --body-color: #F1FFE7;
 }
 
 html, body, #container {
-    height: 100%
+    height: 100%;
 }
 
 body {
     font-family: 'Hind Madurai', sans-serif;
     margin: 0;
     background-color: var(--body-color);
+    overflow-x:hidden;
 }
 
-hr {
-    border: var(--text-color);
-    background-color: var(--text-color);
-    height: 5px;
-    margin-bottom: 25px; 
-}
-
-#title-area {
-    padding-top: 75px;
-    padding-left: 75px;
-}
-
-
-/*
-
-
-#map-container {
-    display: inline-block;
-    width: 50%;
-    margin-top: 50px;
-}
-
-#chart-container {
-    display: inline-block;
-    width: 50%;
-    margin-top: 50px;
-}
-
-.map {
-    display: inline-block;
-}
-*/
 #container {
     position: relative;
+    width: 100%;
 }
 
 #map-container {
@@ -70,29 +39,24 @@ hr {
     padding-top: 15px;
     padding-left: 50px;
     padding-right: 50px;
-    /*background-color: #3873B2;*/
     background-color: var(--panel-color);
     color: var(--text-color);
 }
 
 h1 {
     font-family: 'Francois One', sans-serif;
-    /*color: #FFD10C;*/
-    /*color: #F9BE00;*/
     color: var(--text-color);
     font-size: 2.5em;
 }
 
 .map {
-    /*display: inline-block;*/
     display: block;
-      margin: auto;
-      height: 100%;
+    margin: auto;
+    height: 100%;
+    text-align: center;
 }
 
 .counties {
-    /*fill: #005580;*/
-    /*fill: #160A47;*/
     fill: var(--map-color);
     stroke: white;
 }
@@ -116,19 +80,6 @@ h1 {
     background-color: var(--text-color);
 }
 
-table {
-    display: block;
-    /*width: 100%;*/
-    height: 300px;
-    overflow-y: scroll;
-    overflow-x: scroll;
-    /*margin:0 auto;
-    background: #aaa;
-    color: #333;
-    text-align: left;
-    font-size: 1.4em;*/
-}
-
 #species-info {
     background-color: var(--panel-color);
     color: black;
@@ -148,8 +99,11 @@ table {
     position: absolute;
     padding-left: 20px;
     font-size: 0.8em;
-    width: 110%;
     text-align: center;
+}
+
+#key {
+    font-size: 0.8em;
 }
 
 /*------------------------Links--------------------------*/
@@ -178,30 +132,30 @@ a:active {
 }
 /*-------------------------TABLE----------------------------*/
 
-/*
-* { 
-  margin: 0; 
-  padding: 0; 
- }
- body { 
-   font: 14px/1.4 Georgia, Serif; 
- }
-#page-wrap {
-  margin: 50px;
+hr {
+    border: var(--text-color);
+    background-color: var(--text-color);
+    height: 5px;
+    margin-bottom: 25px; 
 }
-p {
- margin: 20px 0; 
-}
-*/
 
-/* 
-Generic Styling, for Desktops/Laptops 
-*/
+table {
+    display: block;
+    height: 300px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+}
+
+#county-table_wrapper label, #county-table_info {
+    color: var(--text-color);
+}
+
+/* Generic Styling, for Desktops/Laptops */
 table { 
     width: 100%; 
     border-collapse: collapse; 
 }
-/* Zebra striping */
+/* Zebra striping (for mobile)*/
 tr:nth-of-type(odd) { 
     background: #eee;
     color: black;
@@ -213,34 +167,23 @@ tr:nth-of-type(even) {
 }
 
 th { 
-    /*background: #90A38F;*/
     background: var(--highlight-color);
-    /*background: #333; */
     color: white; 
     font-weight: bold; 
     cursor: s-resize;
     background-repeat: no-repeat;
     background-position: 3% center;
 }
+
 td, th { 
     padding: 6px; 
     border: 1px solid #ccc; 
     text-align: left; 
 }
 
-th.des:after {
-  content: "\21E9";
-}
-
-th.aes:after {
-  content: "\21E7";
-}
-
-/* 
-Max width before this PARTICULAR table gets nasty
+/* Max width before this PARTICULAR table gets nasty
 This query will take effect for any screen smaller than 760px
-and also iPads specifically.
-*/
+and also iPads specifically.*/
 @media 
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
@@ -278,77 +221,59 @@ only screen and (max-width: 760px),
         white-space: nowrap;
     }
 
-    /*
-    Label the data
-    */
+    /* Label the data */
     td:before {
       content: attr(data-th) ": ";
       font-weight: bold;
       width: 6.5em;
       display: inline-block;
     }
+    
 }
 
-@media screen and (max-width: 1020px) {
+@media screen and (max-width: 1050px) {
     #data-container {
-        width: 100%;
+        width: 130%;
     }
     
     #map-container {
-        width: 110%;
+        position: absolute;
+        width: 130%;
         float: none;
-        /*padding-right: 50px;*/
+        left: 50px;
     }
     
-    /*#attribution {
-        bottom: 0px;
-        padding-left: 10px;
-    }*/
+    table, #species-info, #intro, #selection-area, #last-dropdown-area {
+        width: 65%;
+    }
 }
 
-@media screen and (min-width: 1020px) {
-    body {
-        overflow: hidden;
+@media screen and (max-width: 760px) {
+    table, #species-info, #intro, #selection-area, #last-dropdown-area {
+        width: 85%;
     }
     
     #attribution {
         padding-left: 0px;
-        width: 50%;
-        bottom: 1px;
+    }
+}
+
+@media screen and (min-width: 1050px) {
+    #attribution {
+        padding-left: 0px;
+        bottom: 20px;
         text-align: left;
     }
 }
 
-/*
-@media screen and (max-height: 890px) {
+@media screen and (max-height: 900px) {
     table {
-        height: 425px;
+        height: 250px;
     }
 }
 
-@media screen and (max-height: 815px) {
+@media screen and (max-height: 850px) {
     table {
-        height: 300px;
+        height: 200px;
     }
 }
-*/
-
-/* Smartphones (portrait and landscape) ----------- */
-/*
-@media only screen
-and (min-device-width : 320px)
-and (max-device-width : 480px) {
-    body { 
-        padding: 0; 
-        margin: 0; 
-        width: 320px; }
-    }
-*/
-/* iPads (portrait and landscape) ----------- */
-/*
-@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
-    body { 
-        width: 495px; 
-    }
-}
-*/
